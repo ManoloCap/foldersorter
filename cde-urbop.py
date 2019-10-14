@@ -2,8 +2,8 @@ import errno
 import shutil
 import os
 
-CARPETA_PRINCIPAL = 'Proyecto'
-
+CARPETA_PRINCIPAL = '02-Publicado'
+CARPETA_ARCHIVO = '04-Archivo'
 
 def pathListToString(path):
     bufferString = ''
@@ -20,14 +20,22 @@ def deleteLowVersion(file1,file2):
 
     if(file1Version > file2Version):
         try:
-            dest = '..\\'+CARPETA_PRINCIPAL+'Backup'+file2[1:]
-            os.remove(file2)
+            dest = '..\\'+CARPETA_ARCHIVO+file2[1:]
+            try:
+                shutil.copy2(file2,dest)
+                os.remove(file2)
+            except:
+                print('Error en el archivo: '+file2)
         except:
             pass
     elif(file2Version > file1Version):
         try:
-            os.remove(file1)
-            pass
+            dest = '..\\'+CARPETA_ARCHIVO+file1[1:]
+            try:
+                shutil.copy2(file1,dest)
+                os.remove(file1)
+            except:
+                print('Error en el archivo: '+file1)
         except:
             pass
 
@@ -76,7 +84,7 @@ def copy(src, dest):
 
 
 
-copy('..\\'+CARPETA_PRINCIPAL, '..\\'+CARPETA_PRINCIPAL+'Backup')
+#copy('..\\'+CARPETA_PRINCIPAL, '..\\'+CARPETA_ARCHIVO)
 
 
 filesPathPrincipal = []
