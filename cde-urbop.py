@@ -22,47 +22,55 @@ def pathListToString(path):
     return bufferString
 
 def deleteLowVersion(file1,file2):
-    
-    file1Version = int(file1.split('\\')[-1].split('.')[0].split('-')[-1][1:])
-    file2Version = int(file2.split('\\')[-1].split('.')[0].split('-')[-1][1:])
-    
-    if(file1Version > file2Version and file1.split('\\')[1] == CARPETA_SELECCIONADA):
-        
-        try:
-            dest = '..\\'+CARPETA_ARCHIVO+file2[1:]
-            offset = len(dest.split('\\')[-1])
-            destFolder = dest[:-offset]
-            #print(destFolder)
-            #print(os.path.exists(destFolder))
-            if not os.path.exists(destFolder):
-                print(os.makedirs(destFolder))
-            try:
-                
-                shutil.copy2(file2,dest)
-                os.remove(file2)
-            except:
-                print('Error en el archivo: '+file2)
-        except:
-            pass
 
-    '''
-    elif(file2Version > file1Version):
-        try:
-            dest = '..\\'+CARPETA_ARCHIVO+file1[1:]
+    try:
+        file1Version = int(str(file1.split('\\')[-1].split('.')[0].split('-')[-1][1:]))
+        file2Version = int(str(file2.split('\\')[-1].split('.')[0].split('-')[-1][1:]))
+        
+        if(file1Version > file2Version):
+            print(file1)
             try:
-                shutil.copy2(file1,dest)
-                os.remove(file1)
+                dest = '..\\'+CARPETA_ARCHIVO+file2[1:]
+                offset = len(dest.split('\\')[-1])
+                destFolder = dest[:-offset]
+                #print(destFolder)
+                #print(os.path.exists(destFolder))
+                
+                if not os.path.exists(destFolder):
+                    print(os.makedirs(destFolder))
+                try:
+                    
+                    shutil.copy2(file2,dest)
+                    os.remove(file2)
+                except:
+                    print('Error en el archivo: '+file2)
             except:
-                print('Error en el archivo: '+file1)
-        except:
-            pass
-    '''
+                pass
+
+        '''
+        elif(file2Version > file1Version):
+            try:
+                dest = '..\\'+CARPETA_ARCHIVO+file1[1:]
+                try:
+                    shutil.copy2(file1,dest)
+                    os.remove(file1)
+                except:
+                    print('Error en el archivo: '+file1)
+            except:
+                pass
+        '''
+    except:
+        pass
+    
     return ''
 
 def compareFiles(file1,file2):
 
+    extensionWhiteList = ['dwg','pdf']
+    
     sameFile = False
-
+    goFlag = True
+    
     file1Version = file1.split('\\')[-1].split('.')[0].split('-')[-1]
     file1Extension = file1.split('\\')[-1].split('.')[1]
 
@@ -75,15 +83,23 @@ def compareFiles(file1,file2):
     file1Name = file1[:-phase1]
     file2Name = file2[:-phase2]
 
-    if(file1Name == file2Name and file1Extension != 'py' and file1Extension != 'bat'):
+
+    try:
+        file1Version = int(file1.split('\\')[-1].split('.')[0].split('-')[-1][1:])
+        goFlag = True
+    except:
+        goFlag = False
+        
+    if(file1Name == file2Name and file1Extension in extensionWhiteList and goFlag):
+        #print(file1)
         sameFile = True
 
 
     return sameFile
 
 def cleanOlds(actualPath,pathList):
-
     for path in pathList:
+        
         if(compareFiles(actualPath,path) == True):
             deleteLowVersion(actualPath,path)
 
@@ -110,14 +126,17 @@ filesPathBackup = []
 
 for (dirpath, dirnames, filenames) in os.walk('.'):
     for f in filenames:
-        if(os.path.join(dirpath, f).split('\\')[1] == CARPETA_PRINCIPAL):
+
+        if(CARPETA_SELECCIONADA in os.path.join(dirpath, f).split('\\')):
             
-            #filesPathBackup.append(os.path.join(dirpath, f).split('\\'))
-            filesPathBackup.append(os.path.join(dirpath, f))
-        else:
-            
-            #filesPathPrincipal.append(os.path.join(dirpath, f).split('\\'))
-            filesPathPrincipal.append(os.path.join(dirpath, f))
+            if(os.path.join(dirpath, f).split('\\')[1] == CARPETA_PRINCIPAL):
+                
+                #filesPathBackup.append(os.path.join(dirpath, f).split('\\'))
+                filesPathBackup.append(os.path.join(dirpath, f))
+            else:
+                
+                #filesPathPrincipal.append(os.path.join(dirpath, f).split('\\'))
+                filesPathPrincipal.append(os.path.join(dirpath, f))
 
 
 
